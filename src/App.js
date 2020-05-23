@@ -10,13 +10,14 @@ const Page2 = lazy(() => import('./pages/page2'));
 // Увеличивает скорость загрузки и уменьшает размер первоначального бандла
 // будет пауза 200мс при переходе на страницу 2
 
+const fetchService = new FetchService();
 
 export default function App() {
   const [data, setData] = useState({ });
   const [isLoading, setIsLoading] = useState(true);
   
   //Вынес забор данных в отдельный класс. Типо разделяю получение и представление.
-  const fetchService = new FetchService();
+
   
   useEffect(() => {
     const fetchData = async () => {
