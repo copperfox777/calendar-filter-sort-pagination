@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Layout from "../components/layout";
 import Spinner from "../components/spinner/spinner";
 import Table from "../components/table";
@@ -20,12 +20,15 @@ export default function Page1({ isLoading, data }) {
     }
   };
 
-  // Всё таки при смене сортировки следует переходить
-  // на 1 страницу паджинации, так как общий порядок совсем другой
-  const tableSortHandler = (event) => {
+
+  // Чтобы не переназначать функцию во время рендера и не перерисовывать заголовок,
+  // потому что там эта функция передаётся
+  const tableSortHandler = useCallback((event) => {
     setSortColumnName(event.target.getAttribute("name"));
     setPage(1);
-  };
+  },[]);
+    // Всё таки при смене сортировки следует переходить
+  // на 1 страницу паджинации, так как общий порядок совсем другой
 
   //Внутренняя логика и вычисления тут
   // Для повышения производительности мемоизируем наши "тяжелые" (нет) вычислительные функции

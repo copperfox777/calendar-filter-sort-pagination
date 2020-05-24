@@ -1,7 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-export default function Navbar() {
+// Memoized navbar. Rerenders rarely
+function Navbar() {
+// console.log('navbar rerenders  ')
   return (
     <nav className="mynavbar" role="navigation" aria-label="main navigation">
       <div className="mynavitem">
@@ -17,3 +19,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+export default React.memo(Navbar)

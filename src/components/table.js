@@ -1,16 +1,10 @@
 import React from "react";
 import TableRow from './tableRow'
+import TableHead from "./tableHead";
 export default function Table({ data,tableSortHandler }) {
   return (
     <table className="table">
-      <thead>
-        <tr style={{cursor:'pointer'}}>
-          <th name="summary" onClick={tableSortHandler}>Название </th>
-          <th name="start" onClick={tableSortHandler}>Дата начала</th>
-          <th name="end" onClick={tableSortHandler}>Дата окончания</th>
-          <th name="location" onClick={tableSortHandler}>Место проведения </th>
-        </tr>
-      </thead>
+      <TableHead tableSortHandler={tableSortHandler}/>
       <tbody>
       {data &&
           data.map((item) => {
