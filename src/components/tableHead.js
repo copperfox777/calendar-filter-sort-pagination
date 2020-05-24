@@ -3,11 +3,11 @@ function TableHead({tableSortHandler }) {
   console.log('table head render')
   return (
       <thead>
-        <tr style={{cursor:'pointer'}}>
-          <th name="summary" onClick={tableSortHandler}>Название </th>
-          <th name="start" onClick={tableSortHandler}>Дата начала</th>
-          <th name="end" onClick={tableSortHandler}>Дата окончания</th>
-          <th name="location" onClick={tableSortHandler}>Место проведения </th>
+        <tr onClick={tableSortHandler} style={{cursor:'pointer'}}>
+          <th name="summary">Название </th>
+          <th name="start" >Дата начала</th>
+          <th name="end" >Дата окончания</th>
+          <th name="location" >Место проведения </th>
         </tr>
       </thead>
  
