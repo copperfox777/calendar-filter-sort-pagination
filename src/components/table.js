@@ -1,5 +1,5 @@
 import React from "react";
-
+import TableRow from './tableRow'
 export default function Table({ data,tableSortHandler }) {
   return (
     <table className="table">
@@ -12,15 +12,11 @@ export default function Table({ data,tableSortHandler }) {
         </tr>
       </thead>
       <tbody>
-        {data &&
+      {data &&
           data.map((item) => {
+            let rowArr=[item.summary,item.end,item.start,item.location];
             return (
-              <tr key={item.uid}>
-                <td>{item.summary}</td>
-                <td>{item.end}</td>
-                <td>{item.start}</td>
-                <td>{item.location}</td>
-              </tr>
+              <TableRow key={item.uid} rowData={rowArr}/>
             );
           })}
       </tbody>

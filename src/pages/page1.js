@@ -1,56 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Layout from "../components/layout";
 import Spinner from "../components/spinner/spinner";
 import Table from "../components/table";
-import Pagination from "../components/pagination"
+import Pagination from "../components/pagination";
 
 export default function Page1({ isLoading, data }) {
+  const [filter, setFilter] = useState("");
+  const [sortColumnName, setSortColumnName] = useState("");
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+
+  // Тут все хэндлеры
+  const filterHandler = (event) => setFilter(event.target.value);
+
+  const pageChangeHandler = (payload) => {
+    const n_page = page + payload;
+    if (n_page <= pages && n_page >= 1) {
+      setPage(n_page);
+    }
+  };
+
+  // Всё таки при смене сортировки следует переходить
+  // на 1 страницу паджинации, так как общий порядок совсем другой
+  const tableSortHandler = (event) => {
+    setSortColumnName(event.target.getAttribute("name"));
+    setPage(1);
+  };
+
+  //Внутренняя логика и вычисления тут
+  // Для повышения производительности мемоизируем наши "тяжелые" (нет) вычислительные функции
+  // Разкоментив консоль легко убедиться, что при листании страниц видимые табличные данные
+  // не пересчитываются
+  let memoizedFilterData = useMemo(() => {
+    // console.log('memoizedFilterData called');
+    if (filter !== "") {
+      let fltr = filter.toLocaleLowerCase();
+      return data.filter(
+        (item) => item.location && item.location.toLowerCase().startsWith(fltr)
+      );
+    } else {
+      return data;
+    }
+  }, [filter, data]);
+
+  // мемоизируем
+  let memoizedSortedData = useMemo(() => {
+    // console.log('memoizedSortedData called');
+    if (sortColumnName !== "") { 
+      return memoizedFilterData.slice().sort((a, b) => a[sortColumnName] > b[sortColumnName] ? 1 : b[sortColumnName] > a[sortColumnName] ? -1 : 0 );
+    } else {
+      return memoizedFilterData;
+    }
+  }, [sortColumnName, memoizedFilterData]);
+
+  // А сюда собственно нет смысла добавлять мемоизацию 
+  let dataToPage = memoizedSortedData.slice((page - 1) * 10, page * 10);
   
-  const [filter,setFilter] = useState('');
-  const [sortColumnName,setSortColumnName] = useState('');
-  const [page,setPage] = useState(1);
-  const [pages,setPages] = useState(1);
- 
+  // Общее количество страниц могло измениться 
+  if (pages !== Math.trunc(memoizedSortedData.length / 10)) {
+    setPages(Math.trunc(memoizedSortedData.length / 10));
+  }
+
+  
   if (isLoading) {
     return (
-      <Layout title="This is first page ">
+      <Layout title="The page is loading ">
         <Spinner />
       </Layout>
     );
   }
-  
-  const filterHandler = (event)=> setFilter(event.target.value);
-  
-  const pageChangeHandler = (payload)=> {
-    const n_page=page+payload;
-    if(n_page <= pages && n_page>= 1){setPage(n_page)}
-  };
-  
-  // Всё таки при смене сортировки следует переходить 
-  // на 1 страницу паджинации, так как общий порядок совсем другой
-  const tableSortHandler = (event)=> {
-    setSortColumnName(event.target.getAttribute('name'));
-    setPage(1);
-  };
-
-  
-  //Внутренняя логика и вычисления тут  
-  let dataToTable=data;
-  if(filter!==''){dataToTable =  dataToTable.filter(item => item.location && item.location.startsWith(filter));}
-  if(sortColumnName!==''){dataToTable.sort((a,b) => (a[sortColumnName] > b[sortColumnName]) ? 1 : ((b[sortColumnName] > a[sortColumnName]) ? -1 : 0))}
-  let dataToPage=dataToTable.slice((page-1)*10,page*10);
-  if(pages !== Math.trunc(dataToTable.length / 10)){
-    setPages(Math.trunc(dataToTable.length / 10))
-  };
-  
 
   return (
     <div>
       <Layout>
-        <input name="filter" className="input" type="text" placeholder="Фильтр городов" 
-        value={filter} onChange={filterHandler}></input>
+        <input
+          name="filter"
+          className="input"
+          type="text"
+          placeholder="Фильтр городов"
+          value={filter}
+          onChange={filterHandler}
+        ></input>
         <Table data={dataToPage} tableSortHandler={tableSortHandler} />
-        <Pagination page={page} pages={pages} pageChangeHandler={pageChangeHandler}/>
+        <Pagination
+          page={page}
+          pages={pages}
+          pageChangeHandler={pageChangeHandler}
+        />
       </Layout>
     </div>
   );

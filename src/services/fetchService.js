@@ -42,7 +42,7 @@ export default class FetchService {
   }
 
   transformData = (data) => {
-    console.log('data', data)
+    // console.log('data', data)
     const transformedData = data.map((item) => {
       return {
         uid: item.uid,
@@ -53,9 +53,6 @@ export default class FetchService {
         description: item.description || '',
       };
     });
-
-    // {"uid":"2016-11-16-spbfrontend","start":"2016-11-16T15:30:00.000Z","end":"2016-11-16T18:10:00.000Z","summary":"SPB Frontend Meetup","location":"Санкт-Петербург","description":"https://spb-frontend-events.timepad.ru/event/610196/"}
-    // console.log('dataArray', dataArray);
     // console.log('transformedData', transformedData)
     return transformedData;
   };
